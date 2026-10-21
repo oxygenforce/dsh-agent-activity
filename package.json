@@ -20,7 +20,9 @@
     "icon.svg",
     "README.md",
     "README.zh.md",
-    "LICENSE"
+    "LICENSE",
+    "scripts/check-manifest.mjs",
+    "tests/activity.test.mjs"
   ],
   "keywords": [
     "dsh-plugin",
