@@ -1,0 +1,61 @@
+{
+  "name": "dsh-agent-activity",
+  "version": "0.1.0",
+  "description": "Live plan-and-progress card for the DeepSeek Harness agent: shows what the agent has already done and what it is about to do, while it is still working.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/activity.js",
+    "lib/client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "activity",
+    "progress",
+    "plan",
+    "agent-observability"
+  ],
+  "engines": {
+    "dsh": ">=0.2.1-rc.2"
+  },
+  "scripts": {
+    "check": "node scripts/check-manifest.mjs",
+    "test": "node --test tests/activity.test.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  },
+  "author": "oxygenforce",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oxygenforce/dsh-agent-activity.git"
+  },
+  "homepage": "https://github.com/oxygenforce/dsh-agent-activity#readme",
+  "bugs": {
+    "url": "https://github.com/oxygenforce/dsh-agent-activity/issues"
+  }
+}

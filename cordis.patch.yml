@@ -1,0 +1,3 @@
+- insert:
+    - id: agent-activity
+      name: dsh-agent-activity
