@@ -24,7 +24,7 @@ function replay(events) {
 test("the projection registers the documented key and carries a wire view", () => {
   assert.equal(ACTIVITY_KEY, "activity");
   assert.equal(activityProjection.key, "activity");
-  assert.equal(activityProjection.stateVersion, 2);
+  assert.equal(activityProjection.stateVersion, 3);
   assert.equal(typeof activityProjection.stateSchema.parse, "function");
   assert.equal(typeof activityProjection.wire.view, "function");
   const blank = emptyState();
@@ -102,7 +102,25 @@ test("a text-only assistant message is the writing phase and keeps a preview", (
     }),
   ]);
   assert.equal(state.phase, "writing");
-  assert.equal(state.draft, "Here is the answer that matters.");
+  assert.equal(state.draft, "Here is the answer\nthat matters.");
+});
+
+test("a point-by-point answer keeps its line breaks in the preview", () => {
+  const state = replay([
+    ev("turn/start", 1000, { turn: 1 }),
+    ev("assistant/message", 1100, {
+      turn: 1,
+      step: 1,
+      message: {
+        content: [{
+          type: "text",
+          text: "改了三处：\n\n1. 背景换成表面色\n2. 边框加粗\n3. 加了层级",
+        }],
+      },
+    }),
+  ]);
+  assert.equal(state.phase, "writing");
+  assert.equal(state.draft, "改了三处：\n1. 背景换成表面色\n2. 边框加粗\n3. 加了层级");
 });
 
 test("turn end closes the turn and maps a hard failure to the error phase", () => {
