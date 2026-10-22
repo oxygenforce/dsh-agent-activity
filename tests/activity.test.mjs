@@ -9,7 +9,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { ACTIVITY_KEY, activityProjection, applyEvent, emptyState, summarizeCall } from "../lib/activity.js";
+import { ACTIVITY_KEY, activityProjection, applyEvent, describeCall, emptyState } from "../lib/activity.js";
 
 /** Build one log event with a plausible envelope. */
 function ev(type, time, data) {
@@ -24,7 +24,7 @@ function replay(events) {
 test("the projection registers the documented key and carries a wire view", () => {
   assert.equal(ACTIVITY_KEY, "activity");
   assert.equal(activityProjection.key, "activity");
-  assert.equal(typeof activityProjection.stateVersion, "number");
+  assert.equal(activityProjection.stateVersion, 2);
   assert.equal(typeof activityProjection.stateSchema.parse, "function");
   assert.equal(typeof activityProjection.wire.view, "function");
   const blank = emptyState();
@@ -81,6 +81,7 @@ test("the tool-call blocks of an assistant message are the upcoming plan", () =>
   assert.equal(plan.plan.length, 2);
   assert.equal(plan.plan[0].name, "read");
   assert.equal(plan.plan[0].target, "lib/client.js");
+  assert.equal(plan.plan[0].kind, "path");
   assert.equal(plan.draft, "I will read the file first.");
   assert.equal(plan.counts.steps, 1);
 
@@ -134,25 +135,33 @@ test("ignored events return the same reference", () => {
   assert.equal(applyEvent(state, ev("request/header", 1100, {})), state);
 });
 
-test("summarizeCall picks the informative argument, whatever its shape", () => {
-  assert.equal(summarizeCall("read", '{"file_path":"C:/a/b/c.js"}'), "C:/a/b/c.js");
-  assert.equal(summarizeCall("bash", '{"command":"git status --short"}'), "git status --short");
-  assert.equal(summarizeCall("grep", '{"pattern":"useProjection","path":"lib"}'), "useProjection");
-  assert.equal(summarizeCall("todo_write", '{"todos":[{"content":"a"}]}'), '[{"content":"a"}]');
-  assert.equal(summarizeCall("noop", "not json at all"), "not json at all");
-  assert.equal(summarizeCall("noop", ""), "");
-  assert.equal(summarizeCall("noop", undefined), "");
-  assert.equal(summarizeCall("noop", '{"count":3}'), "3");
+test("describeCall reads the informative argument and labels its kind", () => {
+  assert.deepEqual(describeCall('{"file_path":"C:/a/b/c.js"}'), { target: "C:/a/b/c.js", kind: "path" });
+  assert.deepEqual(describeCall('{"command":"git status --short"}'), { target: "git status --short", kind: "command" });
+  assert.deepEqual(describeCall(JSON.stringify({ command: 'cd "C:/work dir" && npm test' })), { target: "npm test", kind: "command" });
+  assert.deepEqual(describeCall(JSON.stringify({ command: "Set-Location C:/x; pwsh -File a.ps1" })), { target: "pwsh -File a.ps1", kind: "command" });
+  assert.deepEqual(describeCall(JSON.stringify({ command: 'NODE="/x/node" && "$NODE" --test' })), { target: '"$NODE" --test', kind: "command" });
+  assert.deepEqual(describeCall(JSON.stringify({ command: "python - <<'PY'\nimport io\nPY" })), { target: "python", kind: "command" });
+  assert.deepEqual(describeCall('{"pattern":"useProjection","path":"lib"}'), { target: "useProjection", kind: "query" });
+  assert.deepEqual(describeCall('{"url":"https://example.com/x"}'), { target: "https://example.com/x", kind: "url" });
+  assert.deepEqual(describeCall('{"todos":[{"content":"a"}]}'), { target: '[{"content":"a"}]', kind: "list" });
+  assert.deepEqual(describeCall("not json at all"), { target: "not json at all", kind: "other" });
+  assert.deepEqual(describeCall(""), { target: "", kind: "other" });
+  assert.deepEqual(describeCall(undefined), { target: "", kind: "other" });
+  assert.deepEqual(describeCall('{"count":3}'), { target: "3", kind: "other" });
 });
 
-test("long targets are clipped from the end for paths and from the head for commands", () => {
+test("a path target keeps its tail and a long command keeps its head", () => {
   const longPath = "C:/Users/someone/Documents/projects/deepseek-harness/skill/work/lib/client.js";
-  const pathTarget = summarizeCall("read", JSON.stringify({ file_path: longPath }));
-  assert.ok(pathTarget.startsWith("…"), pathTarget);
-  assert.ok(pathTarget.length <= 64, pathTarget);
+  const pathCall = describeCall(JSON.stringify({ file_path: longPath }));
+  assert.equal(pathCall.kind, "path");
+  assert.ok(pathCall.target.startsWith("…"), pathCall.target);
+  assert.ok(pathCall.target.endsWith("client.js"), pathCall.target);
+  assert.ok(pathCall.target.length <= 64, pathCall.target);
 
   const longCommand = "node -e \"console.log('a'.repeat(200))\" && npm test -- --grep something";
-  const commandTarget = summarizeCall("bash", JSON.stringify({ command: longCommand }));
-  assert.ok(commandTarget.endsWith("…"), commandTarget);
-  assert.ok(commandTarget.length <= 64, commandTarget);
+  const commandCall = describeCall(JSON.stringify({ command: longCommand }));
+  assert.equal(commandCall.kind, "command");
+  assert.ok(commandCall.target.endsWith("…"), commandCall.target);
+  assert.ok(commandCall.target.length <= 64, commandCall.target);
 });

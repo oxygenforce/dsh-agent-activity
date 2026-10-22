@@ -30,22 +30,26 @@ plugin_manager action=install_bundle target=/path/to/dsh-agent-activity
 
 ## 界面
 
+卡片上读到的是动作，不是接口名——原始工具名留在悬停提示里，想深挖的人随时能看：
+
 ```
-✓  Agent 动态               步骤 4/12   7 个工具 · 1分03秒   ⌃
-───────────────────────────────────────────────────────────────
-📋 计划 2/5 项完成 · 接下来: 给 README 加上截图
-✓  Bash   pnpm run build                                   12.4秒
-✓  Read   lib/client.js                                     0.1秒
-✗  Bash   node --test tests/                                3.0秒
-⠋  Edit   lib/activity.js                                  1.2秒
-… 之前的 3 步
+✓  Agent 动态                    第 4 步   已做 7 件事 · 1分03秒   ⌃
+──────────────────────────────────────────────────────────────────────
+▮▮▮▯▯  计划 2/5 项 · 接下来: 给 README 加上截图
+✓  运行命令   pnpm run build                                     12.4s
+✓  读文件     …/lib/client.js                                      0.1s
+✗  运行命令   node --test tests/                                   3.0s
+⠋  改文件     …/lib/activity.js                                    1.2s
+…  之前的 3 步
 接下来
-○  Grep   "useProjection" in lib
-○  TodoWrite  [{"content":"verify in the live UI"}]
-✎  "现在把计划行接进头部……"
+○  搜索代码   “useProjection”
+○  更新计划   [{"content":"verify in the live UI"}]
+✎  正在写回答  “现在把计划行接进头部……”
 ```
 
-图标与配色全部走 Harness 主题 token，明暗主题与任意强调色都能直接适配。整块就是 dock 插槽里的普通 React 子树——不往 `document.body` 上挂，也不用 portal。
+`read` 显示为“读文件”、`ops_bash` 为“运行命令”、`grep` 为“搜索代码”……映射随界面语言
+切换（中英双语）；文件路径只留最后两段，搜索词加引号。鼠标悬停能看到原始工具名、
+完整目标和耗时。
 
 ## 实现
 
@@ -57,12 +61,12 @@ projection key 是 `activity`，状态就是纯 JSON：
 
 ```ts
 {
-  v: 1,
+  v: 2,
   turn: number, step: number,
   phase: "idle" | "thinking" | "tool" | "writing" | "done" | "error" | "aborted",
   startedAt: number, updatedAt: number, endedAt: number | null,
-  items: { id, name, target, status: "running" | "ok" | "error", t0, t1 }[],
-  plan:  { id, name, target }[],
+  items: { id, name, target, kind, status: "running" | "ok" | "error", t0, t1 }[],
+  plan:  { id, name, target, kind }[],
   draft: string,
   counts: { steps: number, tools: number, errors: number }
 }

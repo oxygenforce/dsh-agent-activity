@@ -34,22 +34,28 @@ There is nothing to configure. No data leaves the machine.
 
 ## What it renders
 
+The card speaks in actions, not in API names — the raw tool name stays in the hover
+tooltip for anyone who wants the details:
+
 ```
-✓  Agent 动态               步骤 4/12   7 个工具 · 1分03秒   ⌃
-───────────────────────────────────────────────────────────────
-📋 计划 2/5 项完成 · 接下来: 给 README 加上截图
-✓  Bash   pnpm run build                                   12.4秒
-✓  Read   lib/client.js                                     0.1秒
-✗  Bash   node --test tests/                                3.0秒
-⠋  Edit   lib/activity.js                                  1.2秒
-… 之前的 3 步
-接下来
-○  Grep   "useProjection" in lib
-○  TodoWrite  [{"content":"verify in the live UI"}]
-✎  "Now I'll wire the plan row into the header…"
+✓  Agent activity               step 4   7 things done · 1m03s   ⌃
+─────────────────────────────────────────────────────────────────────
+▮▮▮▯▯  2/5 planned · up next: add a screenshot to the README
+✓  Run command   pnpm run build                                     12.4s
+✓  Read file     …/lib/client.js                                      0.1s
+✗  Run command   node --test tests/                                   3.0s
+⠋  Edit file     …/lib/activity.js                                    1.2s
+…  3 earlier steps
+Up next
+○  Search code   “useProjection”
+○  Update plan   [{"content":"verify in the live UI"}]
+✎  Writing the answer  “Now I'll wire the plan row into the header…”
 ```
 
-The glyphs and colors follow the Harness theme tokens, so light/dark and every accent color work unchanged. Everything is an ordinary React subtree inside the dock slot — no portals, no DOM outside the component.
+`read` becomes “read file”, `ops_bash` “run command”, `grep` “search code”, and so on;
+the mapping follows the UI language (Chinese and English), a file path collapses to its
+last two segments, and a search term is quoted. Hovering a row reveals the exact tool
+name, the untouched target and the duration.
 
 ## How it works
 
@@ -61,12 +67,12 @@ The projection key is `activity`, and its state is plain JSON:
 
 ```ts
 {
-  v: 1,
+  v: 2,
   turn: number, step: number,
   phase: "idle" | "thinking" | "tool" | "writing" | "done" | "error" | "aborted",
   startedAt: number, updatedAt: number, endedAt: number | null,
-  items: { id, name, target, status: "running" | "ok" | "error", t0, t1 }[],
-  plan:  { id, name, target }[],
+  items: { id, name, target, kind, status: "running" | "ok" | "error", t0, t1 }[],
+  plan:  { id, name, target, kind }[],
   draft: string,
   counts: { steps: number, tools: number, errors: number }
 }
