@@ -8,4 +8,4 @@ category: ui
 description:
   en: Live done/now/next card above the composer — what the agent has already done, what it is doing, and what it is about to do, while it is still working.
   zh: 输入框上方的「已做 / 正在做 / 接下来」实时卡片：agent 还在干活时就能看到它已经干了什么、现在在干什么、接下来准备干什么。
-tarball: https://github.com/oxygenforce/dsh-agent-activity/releases/download/v0.2.2/dsh-agent-activity-0.2.2.tgz
+tarball: https://github.com/oxygenforce/dsh-agent-activity/releases/download/v0.2.3/dsh-agent-activity-0.2.3.tgz
