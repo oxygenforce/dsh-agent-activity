@@ -67,8 +67,9 @@ clicking the line again:
 Everything reads as an action, not an API name — `read` becomes “read file”, `ops_bash`
 “run command”, `grep` “search code”, and so on. The mapping follows the UI language
 (Chinese and English), a file path collapses to its last two segments, a search term is
-quoted, and shell prologues (`cd … &&`, env assignments, heredocs) are stripped. Hovering
-a row reveals the exact tool name, the untouched target and the duration.
+quoted, and shell prologues (`cd … &&`, env assignments, heredocs) are stripped. Long rows wrap to two lines instead of ending mid-word, the answer preview shows up to
+three lines, and hovering a row still reveals the exact tool name, the untouched target
+and the duration.
 
 ## How it works
 

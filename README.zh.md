@@ -59,7 +59,7 @@ plugin_manager action=install_bundle target=/path/to/dsh-agent-activity
 
 卡片上读到的是动作，不是接口名：`read` 显示为“读文件”、`ops_bash` 为“运行命令”、
 `grep` 为“搜索代码”……映射随界面语言切换；文件路径只留最后两段，搜索词加引号，
-shell 命令的 `cd … &&`、环境变量前缀和 heredoc 都会被剥掉。鼠标悬停能看到原始工具名、
+shell 命令的 `cd … &&`、环境变量前缀和 heredoc 都会被剥掉。长命令最多折行两行、回答预览最多三行（不再只剩半句），鼠标悬停仍可看到原始工具名、
 完整目标和耗时。
 
 ## 实现

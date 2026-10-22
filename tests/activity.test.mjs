@@ -152,16 +152,16 @@ test("describeCall reads the informative argument and labels its kind", () => {
 });
 
 test("a path target keeps its tail and a long command keeps its head", () => {
-  const longPath = "C:/Users/someone/Documents/projects/deepseek-harness/skill/work/lib/client.js";
+  const longPath = "C:/Users/someone/Documents/projects/deepseek-harness/skill/work/lib/client.js".repeat(2);
   const pathCall = describeCall(JSON.stringify({ file_path: longPath }));
   assert.equal(pathCall.kind, "path");
   assert.ok(pathCall.target.startsWith("…"), pathCall.target);
   assert.ok(pathCall.target.endsWith("client.js"), pathCall.target);
-  assert.ok(pathCall.target.length <= 64, pathCall.target);
+  assert.ok(pathCall.target.length <= 120, pathCall.target);
 
-  const longCommand = "node -e \"console.log('a'.repeat(200))\" && npm test -- --grep something";
+  const longCommand = `node -e "console.log('a'.repeat(200))" && npm test -- --grep ${"x".repeat(80)}`;
   const commandCall = describeCall(JSON.stringify({ command: longCommand }));
   assert.equal(commandCall.kind, "command");
   assert.ok(commandCall.target.endsWith("…"), commandCall.target);
-  assert.ok(commandCall.target.length <= 64, commandCall.target);
+  assert.ok(commandCall.target.length <= 120, commandCall.target);
 });
