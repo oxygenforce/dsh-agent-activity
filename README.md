@@ -34,28 +34,38 @@ There is nothing to configure. No data leaves the machine.
 
 ## What it renders
 
-The card speaks in actions, not in API names — the raw tool name stays in the hover
-tooltip for anyone who wants the details:
+By default the card is **one stable line** — it never grows while you read, so it cannot
+push the newest line of the conversation out of view:
 
 ```
-✓  Agent activity               step 4   7 things done · 1m03s   ⌃
-─────────────────────────────────────────────────────────────────────
-▮▮▮▯▯  2/5 planned · up next: add a screenshot to the README
-✓  Run command   pnpm run build                                     12.4s
-✓  Read file     …/lib/client.js                                      0.1s
-✗  Run command   node --test tests/                                   3.0s
-⠋  Edit file     …/lib/activity.js                                    1.2s
-…  3 earlier steps
-Up next
-○  Search code   “useProjection”
-○  Update plan   [{"content":"verify in the live UI"}]
-✎  Writing the answer  “Now I'll wire the plan row into the header…”
+⠋ 正在操作 · 运行命令 "$NODE" --test tests/   → 改文件 …/lib/client.js   已做 5 件事 · 12秒  ⌃
 ```
 
-`read` becomes “read file”, `ops_bash` “run command”, `grep` “search code”, and so on;
-the mapping follows the UI language (Chinese and English), a file path collapses to its
-last two segments, and a search term is quoted. Hovering a row reveals the exact tool
-name, the untouched target and the duration.
+That line carries the three answers on its own: what it is doing now (`运行命令 …`), what
+it is about to do next (`→ 改文件 …`), and how far it has got (`已做 5 件事 · 12秒`). Click
+it to expand the full log — the expanded body has a fixed height, so opening it is one
+movement, not a growing panel:
+
+```
+✓  Agent 动态                    第 4 步   已做 7 件事 · 1分03秒   ⌃
+──────────────────────────────────────────────────────────────────────
+▮▮▮▯▯  计划 2/5 项 · 接下来: 给 README 加上截图
+✓  运行命令   pnpm run build                                     12.4s
+✓  读文件     …/lib/client.js                                      0.1s
+✗  运行命令   node --test tests/                                   3.0s
+⠋  改文件     …/lib/activity.js                                    1.2s
+…  之前的 3 步
+接下来
+○  搜索代码   “useProjection”
+○  更新计划   [{"content":"verify in the live UI"}]
+✎  正在写回答  “现在把计划行接进头部…”
+```
+
+Everything reads as an action, not an API name — `read` becomes “read file”, `ops_bash`
+“run command”, `grep` “search code”, and so on. The mapping follows the UI language
+(Chinese and English), a file path collapses to its last two segments, a search term is
+quoted, and shell prologues (`cd … &&`, env assignments, heredocs) are stripped. Hovering
+a row reveals the exact tool name, the untouched target and the duration.
 
 ## How it works
 
