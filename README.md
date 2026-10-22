@@ -42,9 +42,12 @@ push the newest line of the conversation out of view:
 ```
 
 That line carries the three answers on its own: what it is doing now (`运行命令 …`), what
-it is about to do next (`→ 改文件 …`), and how far it has got (`已做 5 件事 · 12秒`). Click
-it to expand the full log — the expanded body has a fixed height, so opening it is one
-movement, not a growing panel:
+it is about to do next (`→ 改文件 …`), and how far it has got (`已做 5 件事 · 12秒`).
+
+Click it and the full log opens as a **floating panel above the card**: the panel is an
+overlay, so opening it does not change the page layout at all — no blank frame, no scroll
+drift, no reflow of the conversation. It closes on Escape, on a click outside, or by
+clicking the line again:
 
 ```
 ✓  Agent 动态                    第 4 步   已做 7 件事 · 1分03秒   ⌃
