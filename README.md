@@ -34,46 +34,41 @@ There is nothing to configure. No data leaves the machine.
 
 ## What it renders
 
-By default the card is **one stable line** — it never grows while you read, so it cannot
-push the newest line of the conversation out of view:
+The card answers against **your instruction**, not against tool names. The collapsed line
+leads with what you asked, then what is happening now, then how far it has got:
 
 ```
-⠋ 正在跑测试 · npm test   → 接下来 改文件 · …/lib/client.js   已做 5 件事 · 12秒  ⌃
+⠋ 你的要求 不一定要把每一步细节都呈现 把我的上一个命令做好 · 正在 改文件 · client.js   已做 5 件事 · 12秒  ⌃
 ```
 
-That line carries the three answers on its own: what it is doing now (`正在跑测试 …`), what
-it is about to do next (`→ 接下来 改文件 …`), and how far it has got (`已做 5 件事 · 12秒`).
-
-Click it and the full log opens as a **floating panel above the card**: the panel is an
-overlay, so opening it does not change the page layout at all — no blank frame, no scroll
-drift, no reflow of the conversation. It closes on Escape, on a click outside, or by
-clicking the line again:
+Click it and the panel opens as a floating overlay above the card (Escape, outside click or
+a second click closes it) — opening it never changes the page layout:
 
 ```
-✓  Agent 动态                    第 4 步   已做 7 件事 · 1分03秒   ⌃
+你的要求
+  不一定要把每一步细节都呈现 把我的上一个命令做好
+我做了什么   改文件 3 · 跑测试 2 · 发版 1
 ──────────────────────────────────────────────────────────────────────
-▮▮▮▯▯  计划 2/5 项 · 接下来: 给 README 加上截图
-✓  跑测试     npm test                                              3.0s
-✓  读文件     …/lib/client.js                                        0.1s
-✗  跑测试     npm test                                             12.4s
-⠋  改文件     …/lib/activity.js                                      1.2s
-…  之前的 3 步
+✓  改文件     …/lib/client.js                                        1.2s
+✓  跑测试     npm test                                               3.0s
+⠋  改文件     …/lib/activity.js                                       0.8s
 接下来
-○  搜代码     “useProjection”
-○  更新任务清单
+○  跑测试     npm test
 ✎  正在写回答  “现在把计划行接进头部…”
 ```
 
-Every row answers **what the agent is trying to do, and to what** — never which API it
-called. A shell command is classified by what it actually does — `npm test` → 跑测试,
-`"$NODE" --check lib/client.js` → 检查语法 · client.js, `curl -o x.tgz …` → 下载文件 · x.tgz,
-`curl https://api.github.com/…` → 调接口 · github.com, `git push` → 提交代码. A file action
-collapses to its last two segments, a search shows its quoted term, and when a command
-cannot be classified the row says 执行命令 next to the command itself — never a vague
-label with no information. The tool name survives only in the hover tooltip, next to the
-untouched command. The wording follows the UI language (Chinese and
-English), long commands wrap to two lines, and the answer preview keeps its line breaks
-(one point per line, five lines maximum).
+That is the whole point: **your words first**, then a plain recap of what was done for them
+(`改文件 3 · 跑测试 2 · 发版 1`), then the rows and what is queued. No API names — `npm test`
+reads 跑测试, `"$NODE" --check lib/client.js` reads 检查语法 · client.js, `curl -o x.tgz …`
+reads 下载文件 · x.tgz, `git push` reads 提交代码. A file path collapses to its last two
+segments, a search shows its quoted term, and a command that cannot be classified shows
+执行命令 next to the command itself — never a vague label with no information. Tool names
+survive only in the hover tooltip. Wording follows the UI language (Chinese and English),
+long rows wrap to two lines, and the answer preview keeps its line breaks.
+
+If the agent also keeps a todo list, the panel shows it as a checklist under
+「为了完成你的要求，我打算」 with ✓ done / ⠋ running / ○ pending — that is the plan in the
+agent's own words, so it leads the panel whenever it exists.
 
 ## How it works
 

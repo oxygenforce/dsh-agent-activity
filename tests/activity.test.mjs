@@ -24,7 +24,7 @@ function replay(events) {
 test("the projection registers the documented key and carries a wire view", () => {
   assert.equal(ACTIVITY_KEY, "activity");
   assert.equal(activityProjection.key, "activity");
-  assert.equal(activityProjection.stateVersion, 3);
+  assert.equal(activityProjection.stateVersion, 4);
   assert.equal(typeof activityProjection.stateSchema.parse, "function");
   assert.equal(typeof activityProjection.wire.view, "function");
   const blank = emptyState();
@@ -144,6 +144,26 @@ test("turn end closes the turn and maps a hard failure to the error phase", () =
     ev("turn/end", 2000, { turn: 1, reason: { kind: "aborted" } }),
   ]);
   assert.equal(stopped.phase, "aborted");
+});
+
+test("the user's instruction is remembered so the card can frame the work", () => {
+  const state = replay([
+    ev("user/message", 900, {
+      content: [{ type: "text", text: "  把卡片改成按我的指令显示\n再发一版  " }],
+      role: "user",
+    }),
+    ev("turn/start", 1000, { turn: 1 }),
+    ev("tool/call", 1010, { turn: 1, step: 1, callId: "c1", name: "read", arguments: "{}" }),
+  ]);
+  assert.equal(state.prompt, "把卡片改成按我的指令显示 再发一版");
+  // A later turn keeps the instruction, so the card never loses the frame.
+  const next = applyEvent(state, ev("turn/start", 5000, { turn: 2 }));
+  assert.equal(next.prompt, "把卡片改成按我的指令显示 再发一版");
+  // An event without a text block does not clear it.
+  assert.equal(applyEvent(state, ev("user/message", 5100, { content: [] })), state);
+  const long = replay([ev("user/message", 900, { content: [{ type: "text", text: "要".repeat(400) }] })]);
+  assert.ok(long.prompt.length <= 120, String(long.prompt.length));
+  assert.ok(long.prompt.endsWith("…"));
 });
 
 test("ignored events return the same reference", () => {
