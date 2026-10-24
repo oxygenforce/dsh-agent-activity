@@ -38,11 +38,11 @@ By default the card is **one stable line** — it never grows while you read, so
 push the newest line of the conversation out of view:
 
 ```
-⠋ 正在操作 · 运行命令 "$NODE" --test tests/   → 改文件 …/lib/client.js   已做 5 件事 · 12秒  ⌃
+⠋ 正在跑测试 · npm test   → 接下来 改文件 · …/lib/client.js   已做 5 件事 · 12秒  ⌃
 ```
 
-That line carries the three answers on its own: what it is doing now (`运行命令 …`), what
-it is about to do next (`→ 改文件 …`), and how far it has got (`已做 5 件事 · 12秒`).
+That line carries the three answers on its own: what it is doing now (`正在跑测试 …`), what
+it is about to do next (`→ 接下来 改文件 …`), and how far it has got (`已做 5 件事 · 12秒`).
 
 Click it and the full log opens as a **floating panel above the card**: the panel is an
 overlay, so opening it does not change the page layout at all — no blank frame, no scroll
@@ -53,24 +53,24 @@ clicking the line again:
 ✓  Agent 动态                    第 4 步   已做 7 件事 · 1分03秒   ⌃
 ──────────────────────────────────────────────────────────────────────
 ▮▮▮▯▯  计划 2/5 项 · 接下来: 给 README 加上截图
-✓  运行命令   pnpm run build                                     12.4s
-✓  读文件     …/lib/client.js                                      0.1s
-✗  运行命令   node --test tests/                                   3.0s
-⠋  改文件     …/lib/activity.js                                    1.2s
+✓  跑测试     npm test                                              3.0s
+✓  读文件     …/lib/client.js                                        0.1s
+✗  跑测试     npm test                                             12.4s
+⠋  改文件     …/lib/activity.js                                      1.2s
 …  之前的 3 步
 接下来
-○  搜索代码   “useProjection”
-○  更新计划   [{"content":"verify in the live UI"}]
+○  搜代码     “useProjection”
+○  更新任务清单
 ✎  正在写回答  “现在把计划行接进头部…”
 ```
 
-Everything reads as an action, not an API name — `read` becomes “read file”, `ops_bash`
-“run command”, `grep` “search code”, and so on. The mapping follows the UI language
-(Chinese and English), a file path collapses to its last two segments, a search term is
-quoted, and shell prologues (`cd … &&`, env assignments, heredocs) are stripped. Long rows wrap to two lines instead of ending mid-word, and the answer preview keeps its
-line breaks — a point-by-point answer shows one point per line (up to five lines) instead
-of collapsing into a run-on. Hovering a row still reveals the exact tool name, the
-untouched target and the duration.
+Every row answers **what the agent is trying to do, and to what** — never which API it
+called. A shell command is classified by what it actually does (`npm test` → 跑测试,
+`git push` → 提交代码, `python x.py` → 跑脚本 · x.py); a file action collapses to its last
+two segments; a search shows its quoted term. The tool name survives only in the hover
+tooltip, next to the untouched command. The wording follows the UI language (Chinese and
+English), long commands wrap to two lines, and the answer preview keeps its line breaks
+(one point per line, five lines maximum).
 
 ## How it works
 
