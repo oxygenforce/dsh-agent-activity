@@ -58,8 +58,10 @@ plugin_manager action=install_bundle target=/path/to/dsh-agent-activity
 ```
 
 每一行回答的是**“它想干什么、对什么干”**，而不是“调用了哪个接口”：shell 命令按实际做的事
-分类（`npm test` → 跑测试、`git push` → 提交代码、`python x.py` → 跑脚本 · x.py）；文件操作
-只显示最后两段的路径；搜索显示带引号的关键词。工具名只留在悬停提示里，和原始命令放在一起。
+分类（`npm test` → 跑测试、`"$NODE" --check lib/client.js` → 检查语法 · client.js、
+`curl -o x.tgz …` → 下载文件 · x.tgz、`curl https://api.github.com/…` → 调接口 · github.com、
+`git push` → 提交代码）；文件操作只显示最后两段的路径；搜索显示带引号的关键词；实在读不出
+意图的命令不会硬贴标签，而是显示“执行命令”加命令本身——宁可给原文，也不给空话。工具名只留在悬停提示里，和原始命令放在一起。
 文案随界面语言切换；长命令最多折行两行；回答预览**保留换行**——分点回答时一点一行（最多五行）。
 
 ## 实现

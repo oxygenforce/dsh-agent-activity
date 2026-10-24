@@ -65,10 +65,13 @@ clicking the line again:
 ```
 
 Every row answers **what the agent is trying to do, and to what** — never which API it
-called. A shell command is classified by what it actually does (`npm test` → 跑测试,
-`git push` → 提交代码, `python x.py` → 跑脚本 · x.py); a file action collapses to its last
-two segments; a search shows its quoted term. The tool name survives only in the hover
-tooltip, next to the untouched command. The wording follows the UI language (Chinese and
+called. A shell command is classified by what it actually does — `npm test` → 跑测试,
+`"$NODE" --check lib/client.js` → 检查语法 · client.js, `curl -o x.tgz …` → 下载文件 · x.tgz,
+`curl https://api.github.com/…` → 调接口 · github.com, `git push` → 提交代码. A file action
+collapses to its last two segments, a search shows its quoted term, and when a command
+cannot be classified the row says 执行命令 next to the command itself — never a vague
+label with no information. The tool name survives only in the hover tooltip, next to the
+untouched command. The wording follows the UI language (Chinese and
 English), long commands wrap to two lines, and the answer preview keeps its line breaks
 (one point per line, five lines maximum).
 
