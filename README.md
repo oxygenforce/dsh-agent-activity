@@ -26,6 +26,11 @@ Each row now leads with the most human thing available, in this order:
 3. **the action** — otherwise the row falls back to a plain verb and its concrete object
    (`run tests · activity.test.mjs`) rather than a generic category.
 
+Shell commands get the same treatment: the row names the operand, not the category — `delete dist/x.tgz`,
+`search “commandPlan”`, `read README.md`, `look · work/asar-full`, `commit feat: x`. When the same action on
+the same object repeats (three `git status` in a row, five identical greps), the rows collapse into one with
+a `×N` badge instead of padding the list.
+
 ### Read the list, not the mechanics
 
 The card now leads with the same thing the built-in **Tasks** panel above the composer leads with: the
