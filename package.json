@@ -1,6 +1,6 @@
 {
   "name": "dsh-agent-activity",
-  "version": "0.8.2",
+  "version": "0.9.0",
   "description": "Live plan-and-progress card for the DeepSeek Harness agent: shows what the agent has already done and what it is about to do, while it is still working.",
   "license": "MIT",
   "type": "module",
