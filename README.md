@@ -34,19 +34,18 @@ There is nothing to configure. No data leaves the machine.
 
 ## What it renders
 
-The card answers against **your instruction**, not against tool names. The collapsed line
-leads with what you asked, then what is happening now, then how far it has got:
+The card speaks in plain language instead of tool names: what happened, what is happening
+now, and what is queued. It deliberately does **not** echo your message — the transcript right
+above already shows it. The collapsed line is one stable row:
 
 ```
-⠋ 你的要求 不一定要把每一步细节都呈现 把我的上一个命令做好 · 正在 改文件 · client.js   已做 5 件事 · 12秒  ⌃
+⠋ 正在做事   正在 改文件 · client.js                     已做 5 件事 · 12秒  ⌃
 ```
 
 Click it and the panel opens as a floating overlay above the card (Escape, outside click or
 a second click closes it) — opening it never changes the page layout:
 
 ```
-你的要求
-  不一定要把每一步细节都呈现 把我的上一个命令做好
 我做了什么   改文件 3 · 跑测试 2 · 发版 1
 ──────────────────────────────────────────────────────────────────────
 ✓  改文件     …/lib/client.js                                        1.2s
@@ -57,7 +56,7 @@ a second click closes it) — opening it never changes the page layout:
 ✎  正在写回答  “现在把计划行接进头部…”
 ```
 
-That is the whole point: **your words first**, then a plain recap of what was done for them
+That is the whole point: **plain words**, then a recap of what the agent did for the task
 (`改文件 3 · 跑测试 2 · 发版 1`), then the rows and what is queued. No API names — `npm test`
 reads 跑测试, `"$NODE" --check lib/client.js` reads 检查语法 · client.js, `curl -o x.tgz …`
 reads 下载文件 · x.tgz, `git push` reads 提交代码. A file path collapses to its last two
