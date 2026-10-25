@@ -24,7 +24,7 @@ function replay(events) {
 test("the projection registers the documented key and carries a wire view", () => {
   assert.equal(ACTIVITY_KEY, "activity");
   assert.equal(activityProjection.key, "activity");
-  assert.equal(activityProjection.stateVersion, 4);
+  assert.equal(activityProjection.stateVersion, 5);
   assert.equal(typeof activityProjection.stateSchema.parse, "function");
   assert.equal(typeof activityProjection.wire.view, "function");
   const blank = emptyState();
@@ -151,6 +151,7 @@ test("the user's instruction is remembered so the card can frame the work", () =
     ev("user/message", 900, {
       content: [{ type: "text", text: "  把卡片改成按我的指令显示\n再发一版  " }],
       role: "user",
+      source: { kind: "user", rpcId: "r1" },
     }),
     ev("turn/start", 1000, { turn: 1 }),
     ev("tool/call", 1010, { turn: 1, step: 1, callId: "c1", name: "read", arguments: "{}" }),
@@ -160,10 +161,32 @@ test("the user's instruction is remembered so the card can frame the work", () =
   const next = applyEvent(state, ev("turn/start", 5000, { turn: 2 }));
   assert.equal(next.prompt, "把卡片改成按我的指令显示 再发一版");
   // An event without a text block does not clear it.
-  assert.equal(applyEvent(state, ev("user/message", 5100, { content: [] })), state);
-  const long = replay([ev("user/message", 900, { content: [{ type: "text", text: "要".repeat(400) }] })]);
+  assert.equal(applyEvent(state, ev("user/message", 5100, { content: [], source: { kind: "user" } })), state);
+  const long = replay([ev("user/message", 900, { content: [{ type: "text", text: "要".repeat(400) }], source: { kind: "user" } })]);
   assert.ok(long.prompt.length <= 120, String(long.prompt.length));
   assert.ok(long.prompt.endsWith("…"));
+});
+
+test("injected context never becomes the instruction shown on the card", () => {
+  const injected = [
+    { kind: "runtime-context", form: "snapshot" },
+    { kind: "time-context", form: "snapshot" },
+    { kind: "skill-catalog", form: "catalog" },
+    { kind: "plugin:openviking-memory", plugin: "openviking-memory", form: "recall" },
+  ];
+  for (const source of injected) {
+    const state = replay([
+      ev("user/message", 900, {
+        content: [{ type: "text", text: "Time sampled while preparing turn 13, step 1: 2026-10-25T18:42:37+08:00" }],
+        role: "user",
+        source,
+      }),
+    ]);
+    assert.equal(state.prompt, "", source.kind);
+  }
+  // A message with no source at all is not provably the person either.
+  const sourceless = replay([ev("user/message", 900, { content: [{ type: "text", text: "hello" }], role: "user" })]);
+  assert.equal(sourceless.prompt, "");
 });
 
 test("ignored events return the same reference", () => {
