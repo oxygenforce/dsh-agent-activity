@@ -14,6 +14,18 @@ The card docks right above the composer, in the same place as the todo panel, an
 
 While the model streams a reply, the card also shows the leading edge of that reply, so you can tell the difference between "thinking", "stuck" and "writing".
 
+### Every row says what is being done, not which tool ran
+
+A row used to read `write file · client.js`, which tells you nothing unless you already know the code.
+Each row now leads with the most human thing available, in this order:
+
+1. **the todo it is serving** — when the agent keeps a todo list (the todo panel above the composer),
+   the row borrows that sentence verbatim, so it reads *“keep the card after the turn ends”*;
+2. **the exact thing being changed** — for an edit, the row quotes the line being replaced
+   (*`edit “收起时是一行”`*), for a new file it names the file;
+3. **the action** — otherwise the row falls back to a plain verb and its concrete object
+   (`run tests · activity.test.mjs`) rather than a generic category.
+
 It collapses to a single line and **stays there after the turn ends**, so the card doubles as the
 entry point for "what did it just do?" — click it open, read the rows, click × to dismiss that turn
 only. The card comes back by itself when the next turn starts, and reopening a past conversation

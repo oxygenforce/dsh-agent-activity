@@ -24,7 +24,7 @@ function replay(events) {
 test("the projection registers the documented key and carries a wire view", () => {
   assert.equal(ACTIVITY_KEY, "activity");
   assert.equal(activityProjection.key, "activity");
-  assert.equal(activityProjection.stateVersion, 6);
+  assert.equal(activityProjection.stateVersion, 7);
   assert.equal(typeof activityProjection.stateSchema.parse, "function");
   assert.equal(typeof activityProjection.wire.view, "function");
   const blank = emptyState();
@@ -257,4 +257,35 @@ test("a call made without a stated reason leaves the reason empty", () => {
   ]);
   const item = state.items.at(-1);
   assert.equal(item.why, "");
+});
+
+test("each step says which todo it is serving", () => {
+  const todos = [
+    { content: "把卡片改成常驻一行", status: "in_progress" },
+    { content: "发版并写说明", status: "pending" },
+  ];
+  const state = replay([
+    ev("turn/start", 1000, { turn: 4 }),
+    ev("todo/write", 1050, { todos }),
+    ev("tool/call", 1100, { turn: 4, step: 1, callId: "c1", name: "edit", arguments: JSON.stringify({ file_path: "lib/client.js", old_string: "a", new_string: "b" }) }),
+  ]);
+  assert.equal(state.items[0].task, "把卡片改成常驻一行");
+  assert.equal(state.todos.length, 2);
+});
+
+test("a step taken before any todo exists has no task", () => {
+  const state = replay([
+    ev("turn/start", 1000, { turn: 1 }),
+    ev("tool/call", 1100, { turn: 1, step: 1, callId: "c1", name: "read", arguments: JSON.stringify({ file_path: "lib/client.js" }) }),
+  ]);
+  assert.equal(state.items[0].task, "");
+});
+
+test("a new turn forgets the previous turn's todos", () => {
+  const state = replay([
+    ev("turn/start", 1000, { turn: 1 }),
+    ev("todo/write", 1050, { todos: [{ content: "甲", status: "in_progress" }] }),
+    ev("turn/start", 2000, { turn: 2 }),
+  ]);
+  assert.deepEqual(state.todos, []);
 });
