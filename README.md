@@ -49,12 +49,19 @@ a second click closes it) — opening it never changes the page layout:
 我做了什么   改文件 3 · 跑测试 2 · 发版 1
 ──────────────────────────────────────────────────────────────────────
 ✓  改文件     …/lib/client.js                                        1.2s
+   为了 先确认卡片头部现在渲染的是什么
 ✓  跑测试     npm test                                               3.0s
 ⠋  改文件     …/lib/activity.js                                       0.8s
+   为了 把“为什么做这一步”接进每一行
 接下来
 ○  跑测试     npm test
 ✎  正在写回答  “现在把计划行接进头部…”
 ```
+
+Every row carries the reason the agent gave for that step — the sentence it wrote right before the
+call, quoted back as 为了 …. When the agent said nothing (or the step is a long scripted chain),
+the card falls back to the todo item it is currently working on, so a row is never just
+"跑脚本 · x.py" with no purpose.
 
 That is the whole point: **plain words**, then a recap of what the agent did for the task
 (`改文件 3 · 跑测试 2 · 发版 1`), then the rows and what is queued. No API names — `npm test`

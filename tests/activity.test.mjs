@@ -24,7 +24,7 @@ function replay(events) {
 test("the projection registers the documented key and carries a wire view", () => {
   assert.equal(ACTIVITY_KEY, "activity");
   assert.equal(activityProjection.key, "activity");
-  assert.equal(activityProjection.stateVersion, 5);
+  assert.equal(activityProjection.stateVersion, 6);
   assert.equal(typeof activityProjection.stateSchema.parse, "function");
   assert.equal(typeof activityProjection.wire.view, "function");
   const blank = emptyState();
@@ -225,4 +225,36 @@ test("a path target keeps its tail and a long command keeps its head", () => {
   assert.equal(commandCall.kind, "command");
   assert.ok(commandCall.target.endsWith("…"), commandCall.target);
   assert.ok(commandCall.target.length <= 120, commandCall.target);
+});
+
+test("each tool call records why the agent did it", () => {
+  const state = replay([
+    ev("turn/start", 1000, { turn: 1 }),
+    ev("assistant/message", 1100, {
+      turn: 1,
+      step: 1,
+      message: {
+        role: "assistant",
+        content: [
+          { type: "text", text: "先确认卡片头部现在渲染的是什么，才好决定换哪一行。" },
+          { type: "tool-call", id: "c1", name: "read", arguments: JSON.stringify({ file_path: "lib/client.js" }) },
+        ],
+      },
+    }),
+    ev("tool/call", 1200, { turn: 1, step: 1, callId: "c1", name: "read", arguments: JSON.stringify({ file_path: "lib/client.js" }) }),
+    ev("tool/result", 1400, { turn: 1, step: 1, message: { toolCallId: "c1", role: "tool", content: [] } }),
+  ]);
+  const item = state.items.at(-1);
+  assert.equal(item.status, "ok");
+  assert.match(item.why, /决定换哪一行/);
+  assert.ok(item.why.length <= 80);
+});
+
+test("a call made without a stated reason leaves the reason empty", () => {
+  const state = replay([
+    ev("turn/start", 1000, { turn: 1 }),
+    ev("tool/call", 1200, { turn: 1, step: 1, callId: "c2", name: "grep", arguments: JSON.stringify({ pattern: "useProjection" }) }),
+  ]);
+  const item = state.items.at(-1);
+  assert.equal(item.why, "");
 });
