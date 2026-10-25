@@ -14,21 +14,22 @@ The card docks right above the composer, in the same place as the todo panel, an
 
 While the model streams a reply, the card also shows the leading edge of that reply, so you can tell the difference between "thinking", "stuck" and "writing".
 
-### Every row says what is being done, not which tool ran
+### Every row says *why*, then what was done
 
-A row used to read `write file · client.js`, which tells you nothing unless you already know the code.
-Each row now leads with the most human thing available, in this order:
+A row used to read `write file · client.js`, which tells you nothing unless you already know the code — and
+even `delete dist/*.tgz` only says *where*, not *why*. Each row now leads with the purpose, in this order:
 
-1. **the todo it is serving** — when the agent keeps a todo list (the todo panel above the composer),
-   the row borrows that sentence verbatim, so it reads *“keep the card after the turn ends”*;
-2. **the exact thing being changed** — for an edit, the row quotes the line being replaced
-   (*`edit “收起时是一行”`*), for a new file it names the file;
-3. **the action** — otherwise the row falls back to a plain verb and its concrete object
-   (`run tests · activity.test.mjs`) rather than a generic category.
+1. **the todo it serves** — when the agent keeps a todo list (the panel above the composer) the row borrows
+   that sentence, so it reads *"keep the card after the turn ends"*;
+2. **the reason the model itself gave** — the sentence it was writing when it decided to call the tool;
+3. **a plain-language reason for that kind of action** — *"make sure the change did not break anything"* for
+   a test run, *"clear the old package so the next release is not stale"* for deleting `dist/*.tgz`.
 
-Shell commands get the same treatment: the row names the operand, not the category — `delete dist/x.tgz`,
-`search “commandPlan”`, `read README.md`, `look · work/asar-full`, `commit feat: x`. When the same action on
-the same object repeats (three `git status` in a row, five identical greps), the rows collapse into one with
+The concrete detail follows as small print: `run tests activity.test.mjs`, `delete dist/*.tgz`,
+`search “commandPlan”`, `commit feat: x`. So the big line answers **what this step was for**, the small line
+answers **what it touched** — never the raw tool name.
+
+When the same action on the same object repeats (three `git status` in a row), the rows collapse into one with
 a `×N` badge instead of padding the list.
 
 ### Read the list, not the mechanics
