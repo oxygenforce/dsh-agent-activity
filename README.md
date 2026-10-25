@@ -14,7 +14,11 @@ The card docks right above the composer, in the same place as the todo panel, an
 
 While the model streams a reply, the card also shows the leading edge of that reply, so you can tell the difference between "thinking", "stuck" and "writing".
 
-It collapses to a single line (state persists across turns) and hides itself again once the turn has been finished for two minutes, so it never lingers over a finished conversation.
+It collapses to a single line and **stays there after the turn ends**, so the card doubles as the
+entry point for "what did it just do?" — click it open, read the rows, click × to dismiss that turn
+only. The card comes back by itself when the next turn starts, and reopening a past conversation
+shows the last turn of that conversation (the projection keeps exactly one turn of history, which is
+what the card needs).
 
 ## Why a plugin and not a skill
 
