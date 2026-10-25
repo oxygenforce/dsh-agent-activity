@@ -43,10 +43,10 @@ Rows still carry the plain-language label (`edit “收起时是一行”`, `run
 two halves answer different questions: the list says **what is left**, the rows say **what that meant**.
 
 It collapses to a single line and **stays there after the turn ends**, so the card doubles as the
-entry point for "what did it just do?" — click it open, read the rows, click × to dismiss that turn
-only. The card comes back by itself when the next turn starts, and reopening a past conversation
-shows the last turn of that conversation (the projection keeps exactly one turn of history, which is
-what the card needs).
+entry point for "what did it just do?" — click it open, read the rows, click × to fold that turn into
+a small pill. The pill is not a delete: click it and the card comes back, and a page refresh restores
+it too. Reopening a past conversation shows the last turn of that conversation (the projection keeps
+exactly one turn of history, which is what the card needs).
 
 ## Why a plugin and not a skill
 
