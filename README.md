@@ -26,6 +26,16 @@ Each row now leads with the most human thing available, in this order:
 3. **the action** — otherwise the row falls back to a plain verb and its concrete object
    (`run tests · activity.test.mjs`) rather than a generic category.
 
+### Read the list, not the mechanics
+
+The card now leads with the same thing the built-in **Tasks** panel above the composer leads with: the
+list. Opened, it shows one row per todo — `✓ done`, spinner `in progress`, hollow `not started` — and the
+tool calls move down into a secondary *What I ran* section. Collapsed, the single line is the todo being
+worked on, followed by `2 done · 1 now · 1 to go`.
+
+Rows still carry the plain-language label (`edit “收起时是一行”`, `run tests · activity.test.mjs`), so the
+two halves answer different questions: the list says **what is left**, the rows say **what that meant**.
+
 It collapses to a single line and **stays there after the turn ends**, so the card doubles as the
 entry point for "what did it just do?" — click it open, read the rows, click × to dismiss that turn
 only. The card comes back by itself when the next turn starts, and reopening a past conversation
